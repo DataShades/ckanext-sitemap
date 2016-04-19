@@ -30,8 +30,8 @@ class SitemapController(base.BaseController):
             ))
         query = query.order_by(package_revision_table.c.name)
         for package in query.execute():
-            sitemap += '<url><loc>' + request.host_url + '/package/' + package.name + '</loc><lastmod>' + package.revision_timestamp.strftime('%Y-%m-%d') + '</lastmod></url> \n'
+            sitemap += '<url><loc>' + request.host_url.replace('http:','https:') + '/data/dataset/' + package.name + '</loc><lastmod>' + package.revision_timestamp.strftime('%Y-%m-%d') + '</lastmod></url> \n'
         for group in model.Group.all():
-            sitemap += '<url><loc>' + request.host_url + '/group/' + group.name + '</loc></url> \n'
+            sitemap += '<url><loc>' + request.host_url.replace('http:','https:') + '/data/group/' + group.name + '</loc></url> \n'
         sitemap += '</urlset> \n'
         return sitemap
