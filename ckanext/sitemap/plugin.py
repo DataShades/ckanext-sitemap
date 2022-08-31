@@ -12,6 +12,9 @@ from lxml import etree
 from datetime import date
 import logging
 
+from ckanext.toolbelt.decorators import Cache
+from pickle import dumps, loads
+
 
 SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
@@ -19,7 +22,9 @@ XHTML_NS = "http://www.w3.org/1999/xhtml"
 
 log = logging.getLogger(__file__)
 
+weekly_cache = Cache(duration=60 * 60 * 24 * 7, dumper=dumps, loader=loads)
 
+@weekly_cache
 def render_sitemap(country):
     site_url = config.get('ckan.site_url')
     pkgs = Session.query(Package).filter(Package.type == 'dataset').filter(Package.private != True). \
