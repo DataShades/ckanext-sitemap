@@ -13,7 +13,6 @@ from datetime import date
 import logging
 
 from ckanext.toolbelt.decorators import Cache
-from pickle import dumps, loads
 
 
 SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -22,10 +21,11 @@ XHTML_NS = "http://www.w3.org/1999/xhtml"
 
 log = logging.getLogger(__file__)
 
-weekly_cache = Cache(duration=60 * 60 * 24 * 7, dumper=dumps, loader=loads)
+weekly_cache = Cache(duration=60 * 60 * 24 * 7)
+
 
 @weekly_cache
-def render_sitemap(country):
+def _get_sitemap_content(country):
     site_url = config.get('ckan.site_url')
     pkgs = Session.query(Package).filter(Package.type == 'dataset').filter(Package.private != True). \
         filter(Package.state == 'active').all()
@@ -45,7 +45,12 @@ def render_sitemap(country):
     # Add XML header
     content = etree.tostring(root, pretty_print=True, encoding='unicode')
     content = '<?xml version="1.0" encoding="UTF-8"?>\n' + content
-    headers = {'Content-Type': 'application/xml; charset=utf-8'}
+    return content
+    
+
+def render_sitemap(country):
+    content = _get_sitemap_content(country)
+    headers = {'Content-Type': 'application/xml; charset=utf-8'}   
     return make_response((content, 200, headers))
 
 
