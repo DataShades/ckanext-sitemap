@@ -26,9 +26,8 @@ weekly_cache = Cache(duration=60 * 60 * 24 * 7)
 
 @weekly_cache
 def _get_sitemap_content(organization):
-    site_url = config.get('ckan.site_url')
-    pkgs = Session.query(Package).filter(Package.type == 'dataset').filter(Package.private != True). \
-        filter(Package.state == 'active').all()
+    site_url = config.get('ckan.site_url')   
+    pkgs = Session.query(Package).filter(Package.private != True).filter(Package.state == 'active').all()
     root = etree.Element("urlset", nsmap={None: SITEMAP_NS, 'xhtml': XHTML_NS})
     for pkg in pkgs:
         pkg_organization: list = Session.query(Group).filter(Group.id == pkg.owner_org).first()
