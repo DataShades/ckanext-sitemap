@@ -1,60 +1,29 @@
-'''
-Sitemap plugin for CKAN
-'''
-
 import ckan.plugins as p
+import ckan.plugins.toolkit as tk
 
-from ckan.plugins.toolkit import config, url_for
-from ckan.model import Session, Package
-from flask import Blueprint, make_response
+from ckan import types
+from ckan.common import CKANConfig
 
-from lxml import etree
-from datetime import date
-import logging
-
-
-SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
-
-XHTML_NS = "http://www.w3.org/1999/xhtml"
-
-log = logging.getLogger(__file__)
+from ckanext.sitemap.middlewares import add_noindex_nofollow
+from ckanext.sitemap.configs import sitemap_enable_indexing_block
 
 
-def render_sitemap():
-    site_url = config.get('ckan.site_url')
-    pkgs = Session.query(Package).filter(Package.type == 'dataset').filter(Package.private != True). \
-        filter(Package.state == 'active').all()
-    log.debug(pkgs)
-    root = etree.Element("urlset", nsmap={None: SITEMAP_NS, 'xhtml': XHTML_NS})
-    for pkg in pkgs:
-        url = etree.SubElement(root, 'url')
-        loc = etree.SubElement(url, 'loc')
-        pkg_url = url_for('dataset.read', id=pkg.name)
-        loc.text = site_url + pkg_url
-        lastmod = etree.SubElement(url, 'lastmod')
-        lastmod.text = pkg.metadata_modified.strftime('%Y-%m-%d')
-
-    # Add XML header
-    content = etree.tostring(root, pretty_print=True, encoding='unicode')
-    content = '<?xml version="1.0" encoding="UTF-8"?>\n' + content
-    headers = {'Content-Type': 'application/xml; charset=utf-8'}
-    return make_response((content, 200, headers))
-
-
-def testme():
-    content = 'Test Me'
-    headers = {'Content-Type': 'text/html; charset=utf-8'}
-    return make_response((content, 200, headers))
-
-
+@tk.blanket.blueprints
+@tk.blanket.helpers
+@tk.blanket.validators
 class SitemapPlugin(p.SingletonPlugin):
-    p.implements(p.IBlueprint)
+    p.implements(p.IConfigurer)
+    p.implements(p.IDomainObjectModification, inherit=True)
+    p.implements(p.IMiddleware, inherit=True)
 
-    def get_blueprint(self):
-        blueprint = Blueprint("sitemap", self.__module__)
-        blueprint.add_url_rule("/sitemap.xml", view_func=render_sitemap)
+    # IConfigurer
+    def update_config(self, config_):
+        tk.add_template_directory(config_, "templates")
+        tk.add_public_directory(config_, "public")
+        tk.add_resource("assets", "sitemap")
 
-        # Use this to debug routes
-        #blueprint.add_url_rule("/testme", view_func=testme)
-        return blueprint
-        
+    # IMiddleware
+    def make_middleware(self, app: types.CKANApp, config: CKANConfig) -> types.CKANApp:
+        if sitemap_enable_indexing_block():
+            app.after_request(add_noindex_nofollow)
+        return app

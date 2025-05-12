@@ -1,0 +1,69 @@
+{% extends "admin/base.html" %}
+
+{% import "macros/form.html" as form %}
+
+
+{% block primary_content_inner %}
+    <h2>{{ _("Sitemap Settings") }}</h2>
+
+    {% set sections = h.get_sitemap_settings("sitemap_sections") %}
+
+    {{ form.errors(error_summary) }}
+
+    <form method="POST" action="" id="admin-sitemap-config-form">
+        <div class="accordion" id="accordionSitemapSettings">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading-general">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#general" aria-expanded="true" aria-controls="general">
+                        {{ _("General") }}
+                    </button>
+                </h2>
+                <div id="general" class="accordion-collapse collapse show" aria-labelledby="heading-general" data-bs-parent="#accordionSitemapSettings">
+                    <div class="accordion-body">
+                        {% snippet "admin/snippets/sitemap_general.html", data=data %}
+                    </div>
+                </div>
+            </div>
+            {% for section in sections %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading-{{ section }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ section }}" aria-expanded="false" aria-controls="{{ section }}">
+                            {{ _(section|capitalize) }}
+                        </button>
+                    </h2>
+                    <div id="{{ section }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ section }}" data-bs-parent="#accordionSitemapSettings">
+                        <div class="accordion-body">
+                            {% snippet "admin/snippets/sitemap_section.html", data=data, section=section %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ h.url_for('sitemap_admin.reset_settings') }}"
+                class="btn btn-danger pull-left"
+                data-module="confirm-action"
+                data-module-content="{{ _('Are you sure you want to reset all current settings to default state?') }}">
+                {{ _("Reset") }}
+            </a>
+            <button type="submit" class="btn btn-primary" name="save">{{ _("Update Settings") }}</button>
+        </div>
+    </form>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ _("Sitemap Actions") }}</h3>
+        </div>
+
+        <div class="panel-body">
+            <a href="{{ h.url_for('sitemap.index') }}" class="btn btn-primary" target="_blank">
+                {{ _("View Sitemap") }}
+            </a>
+
+            <a href="{{ h.url_for('sitemap_admin.ping_search_engines') }}" class="btn btn-default">
+                {{ _("Ping to search engines") }}
+            </a>
+        </div>
+    </div>
+{% endblock %}

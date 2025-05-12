@@ -1,0 +1,49 @@
+{% import "macros/form.html" as form %}
+
+
+{% call form.input("{}_limit".format(section),
+    id="field-{}-limit".format(section),
+    label=_("Limit"),
+    value=data.get("{}_limit".format(section), ""),
+    error=error,
+    classes=["control-medium"]) %}
+    {{ form.info(_("Maximum entities per sitemap section.")) }}
+{% endcall %}
+
+{% call form.input("{}_priority".format(section),
+    id="field-{}-priority".format(section),
+    label=_("Priority"),
+    value=data.get("{}_priority".format(section), ""),
+    error=error,
+    classes=["control-medium"]) %}
+    {{ form.info(_("The priority of the URL relative to other URLs on the portal. Valid values ​​range from 0.0 to 1.0.")) }}
+{% endcall %}
+
+{% call form.select("{}_changefreq".format(section),
+    id="field-{}-changefreq".format(section),
+    label=_("Frequency"),
+    options=h.get_frequency_options(),
+    selected=data.get("{}_changefreq".format(section), ""),
+    error=error, classes=["control-medium"]) %}
+    {{ form.info(_("Likely frequency of changes to this section pages.")) }}
+{% endcall %}
+
+{% if section == "pages" %}
+    {% call form.checkbox("{}_api".format(section),
+        id="field-{}-api".format(section),
+        label=_("Include API documentation pages"),
+        value=data.get("{}_api".format(section)),
+        checked=h.as_bool(data.get("{}_api".format(section))),
+        attrs={"data-module": "sitemap-checkbox"},
+        error=error) %}
+    {% endcall %}
+{% endif %}
+
+{% call form.checkbox("{}_exclude".format(section),
+    id="field-{}-exclude".format(section),
+    label=_("Exclude this section from the sitemap"),
+    value=data.get("{}_exclude".format(section)),
+    checked=h.as_bool(data.get("{}_exclude".format(section))),
+    attrs={"data-module": "sitemap-checkbox"},
+    error=error) %}
+{% endcall %}

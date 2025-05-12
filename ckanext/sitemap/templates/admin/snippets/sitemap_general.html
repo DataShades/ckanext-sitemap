@@ -1,0 +1,40 @@
+{% import "macros/form.html" as form %}
+
+
+{% call form.select("date_format",
+    id="field-date-format",
+    label=_("Date Format"),
+    options=[
+        {"value": "default", "text": "Default (YYYY-MM-DD)"},
+        {"value": "iso", "text": "ISO (YYYY-MM-DDTHH:MM:SS+00:00)"},
+    ],
+    selected=data.get("date_format", ""),
+    error=error,
+    classes=["control-medium"]) %}
+    {{ form.info(_("Format of the date of last modification of the page.")) }}
+{% endcall %}
+
+{% call form.checkbox("include_hreflang",
+    id="field-include-hreflang",
+    label=_("Include hreflang tags (for multiple language portals)"),
+    value=data.get("include_hreflang"),
+    checked=h.as_bool(data.get("include_hreflang")),
+    attrs={"data-module": "sitemap-checkbox"},
+    error=error) %}
+{% endcall %}
+
+{% call form.checkbox("enable_robots_txt",
+    id="field-enable-robots-txt",
+    label=_("Enable sitemap robots.txt"),
+    value=data.get("enable_robots_txt"),
+    checked=h.as_bool(data.get("enable_robots_txt")),
+    attrs={"data-module": "sitemap-checkbox"},
+    error=error) %}
+{% endcall %}
+
+{{ form.textarea("robots_txt",
+    id="field-robots-txt",
+    label=_("Robots.txt content"),
+    value=data.get("robots_txt"),
+    attrs=dict({"class": "form-control"}),
+    error=error) }}
