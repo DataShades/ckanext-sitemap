@@ -23,15 +23,6 @@
     error=error) %}
 {% endcall %}
 
-{% call form.checkbox("enable_robots_txt",
-    id="field-enable-robots-txt",
-    label=_("Enable sitemap robots.txt"),
-    value=data.get("enable_robots_txt"),
-    checked=h.as_bool(data.get("enable_robots_txt")),
-    attrs={"data-module": "sitemap-checkbox"},
-    error=error) %}
-{% endcall %}
-
 {{ form.textarea("robots_txt",
     id="field-robots-txt",
     label=_("Robots.txt content"),

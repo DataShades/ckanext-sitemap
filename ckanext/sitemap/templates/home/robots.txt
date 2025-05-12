@@ -1,0 +1,2 @@
+{{ h.get_robots_txt_content() }}
+

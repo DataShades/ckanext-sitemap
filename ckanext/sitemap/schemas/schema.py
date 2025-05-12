@@ -11,7 +11,6 @@ def sitemap_schema():
         # General section options 
         "date_format": [ignore_empty, unicode_safe],
         "include_hreflang": [ignore_empty],
-        "enable_robots_txt": [ignore_empty],
         "robots_txt": [ignore_empty, unicode_safe],
         
         # Pages section options 

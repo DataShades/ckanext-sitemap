@@ -3,7 +3,7 @@ from typing import Any
 from ckan.common import _
 from ckan.plugins import toolkit as tk
 
-from ckanext.sitemap import configs
+from ckanext.sitemap import configs, utils
 
 
 def get_available_languages():
@@ -53,3 +53,8 @@ def get_sitemap_settings(key: str) -> Any:
         "sitemap_include_hreflang": configs.sitemap_include_hreflang(),
     }
     return settings.get(key, None)
+
+
+def get_robots_txt_content() -> str:
+    """Generate the robots.txt content."""
+    return utils.get_sitemap_config("robots_txt", utils.get_default_robots_txt)
