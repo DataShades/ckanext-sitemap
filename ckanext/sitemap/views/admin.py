@@ -43,6 +43,8 @@ class SitemapAdminView(MethodView):
         Raises:
             403 Forbidden: If the requesting user is not a CKAN sysadmin.
         """
+        if tk.current_user.is_anonymous:
+            return tk.abort(403, tk._("Need to be system administrator to administer"))
         data=utils.get_sitemap_settings()
         robots_txt = utils.get_sitemap_config("robots_txt")
         if not robots_txt:
@@ -62,8 +64,9 @@ class SitemapAdminView(MethodView):
             
         Raises:
             403 Forbidden: If the requesting user is not a CKAN sysadmin.
-            500 Internal Server Error: If sitemap generation fails.
         """
+        if tk.current_user.is_anonymous:
+            return tk.abort(403, tk._("Need to be system administrator to administer"))
         try:
             data = tk.request.form
 
@@ -92,6 +95,8 @@ class SitemapAdminView(MethodView):
             werkzeug.wrappers.Response: 
                 A redirect response to the sitemap settings page ('sitemap_admin.settings' route).
         """
+        if tk.current_user.is_anonymous:
+            return tk.abort(403, tk._("Need to be system administrator to administer"))
         try:
             delete_system_info("sitemap")
             tk.h.flash_success(tk._("All sitemap settings have been reset to defaults"))
