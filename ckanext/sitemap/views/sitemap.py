@@ -190,9 +190,6 @@ class SitemapView(MethodView):
 
         if section == "pages":
             result = utils.get_endpoints_without_arguments()
-            include_api = utils.get_sitemap_config("pages_api")
-            if include_api:
-                result.append("api.get_api")
             if limit < len(result):
                 result =result[:limit]
 

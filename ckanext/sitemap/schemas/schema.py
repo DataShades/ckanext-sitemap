@@ -17,7 +17,6 @@ def sitemap_schema():
         "pages_limit": [ignore_empty, natural_number_validator],
         "pages_priority": [ignore_empty, is_ranged_float],
         "pages_changefreq": [ignore_empty, unicode_safe],
-        "pages_api": [ignore_empty],
         "pages_exclude": [ignore_empty],
         
         # Dataset section options 

@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
-import sys, os
 
-version = '0.1.3'
+version = '1.0.2'
 
 setup(
 	name='ckanext-sitemap',
@@ -11,8 +10,8 @@ setup(
 	""",
 	classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
 	keywords='',
-	author='CSC - IT Center for Science Ltd.',
-	author_email='kata-project@postit.csc.fi',
+	author='Aleksey Morev',
+	author_email='aleksey.morev@linkdigital.com.au',
 	url='https://github.com/kata-csc/ckanext-sitemap',
 	license='AGPL',
 	packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),

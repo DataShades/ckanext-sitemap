@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import json
 
 from typing import Any
-
 from werkzeug.routing import BuildError
 
 from ckan import model
@@ -11,7 +12,7 @@ from ckan.plugins import toolkit as tk
 from ckanext.sitemap import configs
 
 
-def get_sitemap_settings():
+def get_sitemap_settings() -> dict[str, Any]:
     """Get dictionary of all sitemap settings from SystemInfo table."""
     sysinfo_data = (
         model.Session.query(SystemInfo)
@@ -57,7 +58,7 @@ def get_endpoints_without_arguments() -> list[str]:
     return endpoints_without_arguments
 
 
-def get_default_robots_txt(self):
+def get_default_robots_txt() -> str:
     """Generate the default robots.txt content with standard CKAN disallow rules."""
     sitemap_url = tk.url_for("sitemap.index", _external=True)
     

@@ -28,17 +28,6 @@
     {{ form.info(_("Likely frequency of changes to this section pages.")) }}
 {% endcall %}
 
-{% if section == "pages" %}
-    {% call form.checkbox("{}_api".format(section),
-        id="field-{}-api".format(section),
-        label=_("Include API documentation pages"),
-        value=data.get("{}_api".format(section)),
-        checked=h.as_bool(data.get("{}_api".format(section))),
-        attrs={"data-module": "sitemap-checkbox"},
-        error=error) %}
-    {% endcall %}
-{% endif %}
-
 {% call form.checkbox("{}_exclude".format(section),
     id="field-{}-exclude".format(section),
     label=_("Exclude this section from the sitemap"),

@@ -1,0 +1,45 @@
+version: 1
+groups:
+  - annotation: ckanext-sitemap
+    options:
+      - key: ckanext.sitemap.default_limit
+        description: Limit for the number of items per sitemap section
+        default: 1000
+        type: int
+        editable: true
+
+      - key: ckanext.sitemap.default_priority
+        description: Default priority for sitemap entries in all sections
+        default: 0.5
+        type: float
+        editable: true
+
+      - key: ckanext.sitemap.default_frequency
+        description: Default change frequency for sitemap entries in all sections
+        default: monthly
+        type: str
+        editable: true
+
+      - key: ckanext.sitemap.included_endpoints
+        description: |
+          List of CKAN endpoints that should be included in the sitemap index.
+
+          This function reads a configuration value from CKAN's settings to determine which
+          endpoints should be indexed in the sitemap. The endpoints are typically important
+          pages that should be crawled by search engines.
+
+          The configuration value is expected to be a space-separated string of endpoint names
+          in the format 'blueprint.endpoint_name' (e.g., 'dataset.read', 'organization.index').
+        default: []
+        type: list
+        editable: true
+
+      - key: ckanext.sitemap.enable_indexing_block
+        description: |
+          Determines whether search engine indexing should be blocked via sitemap configuration.
+
+          This function checks the CKAN configuration to see if the sitemap should include
+          directives that prevent search engines from indexing certain content.
+        default: false
+        type: bool
+        editable: true

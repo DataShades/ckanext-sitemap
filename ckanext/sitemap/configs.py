@@ -44,9 +44,9 @@ def sitemap_default_limit() -> int:
     
     This limit is used to control the number of entries in each section
     of the sitemap (eg. pages, datasets, resources, organizations, groups).
-    The default value is 10,000.
+    The default value is 1000.
     """
-    return int(tk.config.get(SITEMAP_DEFAULT_LIMIT, 10000))
+    return int(tk.config.get(SITEMAP_DEFAULT_LIMIT, 1000))
 
 
 def sitemap_default_priority() -> float:
@@ -65,9 +65,9 @@ def sitemap_default_changefreq() -> str:
     This is a string that indicates how frequently the content of the
     sitemap is expected to change. The possible values: always, hourly, daily,
     weekly, monthly, yearly, never.
-    The default value is "weekly".
+    The default value is "monthly".
     """
-    return tk.config.get(SITEMAP_DEFAULT_CHANGEFREQ, "weekly")
+    return tk.config.get(SITEMAP_DEFAULT_CHANGEFREQ, "monthly")
 
 
 def sitemap_include_hreflang() -> bool:
@@ -87,7 +87,7 @@ def sitemap_indexable_endpoints() -> set[tuple[str, str]]:
     endpoints should be indexed in the sitemap. The endpoints are typically important
     pages that should be crawled by search engines.
 
-    The configuration value is expected to be a comma-separated string of endpoint names
+    The configuration value is expected to be a space-separated string of endpoint names
     in the format 'blueprint.endpoint_name' (e.g., 'dataset.read', 'organization.index').
     
     The default value is an empty list.
