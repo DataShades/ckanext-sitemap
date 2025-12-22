@@ -13,7 +13,7 @@ def add_noindex_nofollow(response: types.Response) -> types.Response:
     Pages that are not in the indexable_endpoints list or contain query parameters
     will not be indexed.
     """
-    endpoint = ".".join(tk.get_endpoint())
+    endpoint = ".".join(map(str, tk.get_endpoint()))
 
     # Default to noindex/nofollow for non-indexable endpoints
     if endpoint not in configs.sitemap_indexable_endpoints():
