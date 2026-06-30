@@ -9,6 +9,7 @@ from ckanext.sitemap.configs import sitemap_enable_indexing_block
 
 
 @tk.blanket.blueprints
+@tk.blanket.config_declarations
 @tk.blanket.helpers
 @tk.blanket.validators
 class SitemapPlugin(p.SingletonPlugin):

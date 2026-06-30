@@ -36,3 +36,15 @@
     attrs={"data-module": "sitemap-checkbox"},
     error=error) %}
 {% endcall %}
+
+{% if section == "datasets" %}
+    {% call form.checkbox("datasets_fetch_all",
+        id="field-datasets-fetch-all",
+        label=_("Fetch all public datasets"),
+        value=data.get("datasets_fetch_all"),
+        checked=h.as_bool(data.get("datasets_fetch_all")),
+        attrs={"data-module": "sitemap-checkbox"},
+        error=error) %}
+        {{ form.info(_("When enabled, the dataset limit is used as the package_search batch size instead of the maximum number of dataset URLs.")) }}
+    {% endcall %}
+{% endif %}

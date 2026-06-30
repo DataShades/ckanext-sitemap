@@ -45,7 +45,7 @@ class SitemapAdminView(MethodView):
         """
         if tk.current_user.is_anonymous:
             return tk.abort(403, tk._("Need to be system administrator to administer"))
-        data=utils.get_sitemap_settings()
+        data=utils.get_effective_sitemap_settings()
         robots_txt = utils.get_sitemap_config("robots_txt")
         if not robots_txt:
             data["robots_txt"] = utils.get_default_robots_txt()
@@ -68,7 +68,9 @@ class SitemapAdminView(MethodView):
         if tk.current_user.is_anonymous:
             return tk.abort(403, tk._("Need to be system administrator to administer"))
         try:
-            data = tk.request.form
+            data = dict(tk.request.form)
+            for key in utils.SITEMAP_CHECKBOX_KEYS:
+                data.setdefault(key, "false")
 
             validated_data, errors = tk.navl_validate(data, sitemap_schema())
             if errors:

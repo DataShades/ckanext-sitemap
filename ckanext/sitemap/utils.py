@@ -9,7 +9,40 @@ from ckan import model
 from ckan.model.system_info import SystemInfo
 from ckan.plugins import toolkit as tk
 
-from ckanext.sitemap import configs
+
+SITEMAP_CONFIG_KEYS = (
+    "date_format",
+    "include_hreflang",
+    "standard_urlset",
+    "robots_txt",
+    "pages_limit",
+    "pages_priority",
+    "pages_changefreq",
+    "pages_exclude",
+    "datasets_limit",
+    "datasets_priority",
+    "datasets_changefreq",
+    "datasets_fetch_all",
+    "datasets_exclude",
+    "organizations_limit",
+    "organizations_priority",
+    "organizations_changefreq",
+    "organizations_exclude",
+    "groups_limit",
+    "groups_priority",
+    "groups_changefreq",
+    "groups_exclude",
+)
+
+SITEMAP_CHECKBOX_KEYS = (
+    "include_hreflang",
+    "standard_urlset",
+    "pages_exclude",
+    "datasets_fetch_all",
+    "datasets_exclude",
+    "organizations_exclude",
+    "groups_exclude",
+)
 
 
 def get_sitemap_settings() -> dict[str, Any]:
@@ -23,6 +56,18 @@ def get_sitemap_settings() -> dict[str, Any]:
     return json.loads(sysinfo_data.value)
 
 
+def get_effective_sitemap_settings() -> dict[str, Any]:
+    """Get sitemap settings with CKAN config values used as defaults."""
+    data = {}
+    for key in SITEMAP_CONFIG_KEYS:
+        value = tk.config.get(f"ckanext.sitemap.{key}")
+        if value is not None and value != "":
+            data[key] = value
+
+    data.update(get_sitemap_settings())
+    return data
+
+
 def get_sitemap_config(key: str, default: Any = None) -> Any:
     """Get sitemap config option by key.
 
@@ -34,8 +79,11 @@ def get_sitemap_config(key: str, default: Any = None) -> Any:
         Any: value of sitemap config.
     """
     sitemap_settings = get_sitemap_settings()
-    value = sitemap_settings.get(key)
-    if not value or value == "":
+    if key in sitemap_settings and sitemap_settings[key] != "":
+        return sitemap_settings[key]
+
+    value = tk.config.get(f"ckanext.sitemap.{key}")
+    if value is None or value == "":
         return default
     return value
 
@@ -47,6 +95,8 @@ def get_endpoints_without_arguments() -> list[str]:
     without requiring additional arguments. It's useful for identifying static pages that
     can be included directly in a sitemap without dynamic parameters.
     """
+    from ckanext.sitemap import configs
+
     indexable_endpoints = configs.sitemap_indexable_endpoints()
     endpoints_without_arguments = []
     for endpoint in indexable_endpoints:

@@ -11,6 +11,7 @@ def sitemap_schema():
         # General section options 
         "date_format": [ignore_empty, unicode_safe],
         "include_hreflang": [ignore_empty],
+        "standard_urlset": [ignore_empty],
         "robots_txt": [ignore_empty, unicode_safe],
         
         # Pages section options 
@@ -23,6 +24,7 @@ def sitemap_schema():
         "datasets_limit": [ignore_empty, natural_number_validator],
         "datasets_priority": [ignore_empty, is_ranged_float],
         "datasets_changefreq": [ignore_empty, unicode_safe],
+        "datasets_fetch_all": [ignore_empty],
         "datasets_exclude": [ignore_empty],
         
         # Organizations section options 

@@ -23,6 +23,16 @@
     error=error) %}
 {% endcall %}
 
+{% call form.checkbox("standard_urlset",
+    id="field-standard-urlset",
+    label=_("Render URLs directly under urlset"),
+    value=data.get("standard_urlset"),
+    checked=h.as_bool(data.get("standard_urlset")),
+    attrs={"data-module": "sitemap-checkbox"},
+    error=error) %}
+    {{ form.info(_("Use the standard sitemap structure without section wrapper elements.")) }}
+{% endcall %}
+
 {{ form.textarea("robots_txt",
     id="field-robots-txt",
     label=_("Robots.txt content"),

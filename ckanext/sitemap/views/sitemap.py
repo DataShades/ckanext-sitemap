@@ -83,15 +83,18 @@ class SitemapView(MethodView):
         default_priority = configs.sitemap_default_priority()
         available_languages = tk.config.get("ckan.locales_offered", ["en"])
 
+        standard_urlset = configs.sitemap_standard_urlset()
         root = etree.Element("urlset", attrib={}, nsmap=NSMAP)
         
         for section in self._get_included_sections():
-            entities = etree.SubElement(root, section, attrib={}, nsmap=NSMAP)
-            
-            comment = etree.Comment(f"========== {section.capitalize()} ==========")
-            entities.insert(1, comment)
+            parent = root
+            if not standard_urlset:
+                parent = etree.SubElement(root, section, attrib={}, nsmap=NSMAP)
+
+                comment = etree.Comment(f"========== {section.capitalize()} ==========")
+                parent.insert(1, comment)
             for entity in self._get_entities(section):
-                url = etree.SubElement(entities, "url", attrib={}, nsmap=NSMAP)
+                url = etree.SubElement(parent, "url", attrib={}, nsmap=NSMAP)
                 
                 loc = etree.SubElement(url, "loc", attrib={}, nsmap=NSMAP)
                 loc.text = self._get_entity_url(entity)
@@ -121,16 +124,16 @@ class SitemapView(MethodView):
                 lastmod.text = self._format_lastmod(date_str, date_format)
                 
                 changefreq = etree.SubElement(url, "changefreq", attrib={}, nsmap=NSMAP)
-                changefreq.text = utils.get_sitemap_config(
+                changefreq.text = str(utils.get_sitemap_config(
                     f"{section}_changefreq",
                     str(default_changefreq)
-                )
+                ))
                 
                 priority = etree.SubElement(url, "priority", attrib={}, nsmap=NSMAP)
-                priority.text = utils.get_sitemap_config(
+                priority.text = str(utils.get_sitemap_config(
                     f"{section}_priority",
                     str(default_priority)
-                )
+                ))
 
         return root
 
@@ -145,10 +148,11 @@ class SitemapView(MethodView):
             list[str]: A list of section names to include in the sitemap.
         """
         available_sections = copy(configs.SITEMAP_SECTIONS)
-        for key in utils.get_sitemap_settings():
-            if key.endswith("exclude"):
-                available_sections.remove(key.split("_")[0])
-        return available_sections
+        return [
+            section
+            for section in available_sections
+            if not tk.asbool(utils.get_sitemap_config(f"{section}_exclude", False))
+        ]
 
 
     def _format_lastmod(self, date_str: str, format: str) -> str:
@@ -194,6 +198,9 @@ class SitemapView(MethodView):
                 result =result[:limit]
 
         elif section == "datasets":
+            if configs.sitemap_datasets_fetch_all():
+                return self._get_all_datasets(limit)
+
             result = tk.get_action("package_search")(
                 {},
                 {
@@ -224,6 +231,30 @@ class SitemapView(MethodView):
             )
 
         return result
+
+
+    def _get_all_datasets(self, limit: int) -> list[dict[str, Any]]:
+        """Retrieve all public datasets using the configured dataset limit as a batch size."""
+        batch_size = max(limit, 1)
+        result = []
+        start = 0
+
+        while True:
+            data = tk.get_action("package_search")(
+                {},
+                {
+                    "q": "state:active",
+                    "rows": batch_size,
+                    "start": start,
+                    "include_private": False,
+                    "include_drafts": False,
+                },
+            )
+            result.extend(data["results"])
+
+            start += batch_size
+            if start >= data["count"]:
+                return result
 
 
     def _get_entity_url(

@@ -12,6 +12,8 @@ SITEMAP_DEFAULT_PRIORITY = "ckanext.sitemap.default_priority"
 SITEMAP_DEFAULT_CHANGEFREQ = "ckanext.sitemap.default_changefreq"
 SITEMAP_INDEXABLE_ENDPOINTS = "ckanext.sitemap.indexable_endpoints"
 SITEMAP_ENABLE_INDEXING_BLOCK = "ckanext.sitemap.enable_indexing_block"
+SITEMAP_STANDARD_URLSET = "ckanext.sitemap.standard_urlset"
+SITEMAP_DATASETS_FETCH_ALL = "ckanext.sitemap.datasets_fetch_all"
 
 SITEMAP_SECTIONS = [
     "pages",
@@ -78,6 +80,26 @@ def sitemap_include_hreflang() -> bool:
     The default value is False.
     """
     return get_sitemap_config("include_hreflang", False)
+
+
+def sitemap_standard_urlset() -> bool:
+    """Check if sitemap entries should be rendered directly under urlset."""
+    return tk.asbool(
+        get_sitemap_config(
+            "standard_urlset",
+            tk.config.get(SITEMAP_STANDARD_URLSET, False),
+        )
+    )
+
+
+def sitemap_datasets_fetch_all() -> bool:
+    """Check if the datasets section should fetch all public datasets."""
+    return tk.asbool(
+        get_sitemap_config(
+            "datasets_fetch_all",
+            tk.config.get(SITEMAP_DATASETS_FETCH_ALL, False),
+        )
+    )
 
 
 def sitemap_indexable_endpoints() -> set[tuple[str, str]]:

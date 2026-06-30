@@ -48,7 +48,7 @@ To temporary patch the CKAN configuration for the duration of a test you can use
         pass
 """
 import pytest
-from ckan.plugins import plugin_loaded
+from ckan.plugins import IConfigDeclaration, plugin_loaded
 import ckanext.sitemap.plugin as plugin
 
 
@@ -56,3 +56,7 @@ import ckanext.sitemap.plugin as plugin
 @pytest.mark.usefixtures("with_plugins")
 def test_plugin():
     assert plugin_loaded("sitemap")
+
+
+def test_plugin_declares_config_options():
+    assert IConfigDeclaration.implemented_by(plugin.SitemapPlugin)
